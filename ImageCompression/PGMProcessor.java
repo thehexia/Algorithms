@@ -581,21 +581,9 @@ public class PGMProcessor {
             expBits.set(7);
         }
 
-        // for(int i = 0; i < 8; ++i) {
-        //     System.out.println("Bit" + i + ":" + expBits.get(i));
-        // }
-
-        // System.out.println();
-        // System.out.println("EXP BITS: " + expBits);
-
         //store the mantissa
         int fmantissa = fbits & ((1 << 23) - 1);
         short smantissa = (short) (fmantissa / 256);
-        // System.out.println("MANTISSA: " + fmantissa + " " + smantissa);
-
-        // System.out.println(fsign + " " + fexp + " "  + sfexp + " " + fmantissa);
-        // System.out.println(Float.intBitsToFloat((fsign << 31) | (fexp + ((1 << 7) - 1)) << 23 | fmantissa));
-        // System.out.println(Float.intBitsToFloat((fsign << 31) | (fexp + ((1 << 7) - 1)) << 23 | (int)(smantissa * 256)));
 
         byte[] encode = new byte[3];
         for (int i=0; i<expBits.length(); i++) {
@@ -653,6 +641,179 @@ public class PGMProcessor {
         float f = Float.intBitsToFloat((fsign << 31) | (fexp + ((1 << 7) - 1)) << 23 | mantissa);
 
         return f;
+    }
+
+    private class Pair {
+        int length;
+        int value;
+
+        public Pair(int length, int value) {
+            this.length = length;
+            this.value = value;
+        }
+
+        public Pair(byte[] bytes) {
+            ByteBuffer bb = null;
+
+            byte[] larr = new byte[2];
+            larr[0] = bytes[0];
+            larr[1] = bytes[1];
+
+            bb = ByteBuffer.wrap(larr);
+            this.length = (int) bb.getShort();
+
+            this.value = bytes[2] & 0xFF;
+        }
+
+        public byte[] toByteArray() {
+            ByteBuffer bb = ByteBuffer.allocate(2);
+            bb.putShort((short)this.length);
+            byte[] larr = bb.array();
+
+            byte lbyte = ((Integer)this.value).byteValue();
+
+            byte[] ret = new byte[3];
+
+            ret[0] = larr[0];
+            ret[1] = larr[1];
+            ret[2] = lbyte;
+
+            return ret;
+        }
+
+        public String toString() {
+            return "Len: " + length + ", Val: " + value;
+        }
+    }
+
+    public void runLenEncode(String inputPath) throws Exception {
+        int[][] grid = readPGM(inputPath);
+
+        int width = grid[0].length;
+        int height = grid.length;
+        int maxvalue = 255;
+
+        ArrayList<Pair> coded = new ArrayList<Pair>();
+
+        //very first int in the grid
+        int currentInt = grid[0][0];
+        //keep track of the length of the match
+        int matchLen = 0;
+        for(int i = 0; i < height; ++i) {
+            for(int j = 0; j < width; ++j) {
+                if(grid[i][j] == currentInt) {
+                    matchLen++;
+                }
+                else {
+                    Pair p = new Pair(matchLen, currentInt);
+                    coded.add(p);
+                    currentInt = grid[i][j];
+                    matchLen = 1;
+                }
+            }
+        }
+
+        if(matchLen > 0) {
+            Pair p = new Pair(matchLen, currentInt);
+            coded.add(p);
+        }
+
+        FileOutputStream fos = new FileOutputStream(new File(inputPath + ".rn"));
+        //write the output
+        //write the width integer
+        short sWide = (short) width;
+        ByteBuffer bWide = ByteBuffer.allocate(2);
+        bWide.putShort(sWide);
+        fos.write(bWide.array());
+
+        //wrie the height integer
+        short sHei = (short) height;
+        ByteBuffer bHei = ByteBuffer.allocate(2);
+        bHei.putShort(sHei);
+        fos.write(bHei.array());
+
+        //write the byte representing maxvalue
+        fos.write(((Integer)maxvalue).byteValue());
+
+        for(Pair p : coded) {
+            Pair pp = new Pair(p.toByteArray());
+            // System.out.println(p);
+            // System.out.println(pp);
+            fos.write(p.toByteArray());
+        }
+        fos.close();
+    }
+
+    public void runLenDecode(String inputPath) throws Exception {
+        FileInputStream fis = new FileInputStream(new File(inputPath));
+
+        int width = 0;
+        int height = 0;
+        int maxvalue = 0;
+
+        //first 2 bytes are the width
+        try {
+            byte[] buffer = new byte[2];
+            fis.read(buffer);
+            ByteBuffer bb = ByteBuffer.wrap(buffer);
+            width = bb.getShort();
+            System.out.println(width);
+        }
+        catch(Exception e) {
+            System.err.println("Failed to get width bytes");
+        }
+        //second 2 bytes are the length
+        try {
+            byte[] buffer = new byte[2];
+            fis.read(buffer);
+            ByteBuffer bb = ByteBuffer.wrap(buffer);
+            height = bb.getShort();
+            System.out.println(height);
+        }
+        catch(Exception e) {
+            System.err.println("Failed to get height bytes");
+        }
+        //next is one byte for the maxvalue
+        try {
+            maxvalue = fis.read();
+            if(maxvalue != -1)
+                System.out.println(maxvalue);
+        }
+        catch(Exception e) {
+            System.err.println("Failed to get max value bytes");
+        }
+
+        byte[] buffer = new byte[3];
+        ArrayList<Pair> coded = new ArrayList<Pair>();
+        while(fis.read(buffer) != -1) {
+            Pair p = new Pair(buffer);
+            coded.add(p);
+        }
+
+        runLenDecode2(coded, width, height);
+    }
+
+    public void runLenDecode2(ArrayList<Pair> ps, int width, int height) throws Exception{
+        int[][] grid = new int[height][width];
+
+        int index = 0;
+        for(int i = 0; i < height; ++i) {
+            for(int j = 0; j < width; ++j) {
+                Pair p = ps.get(index);
+                if(p.length > 0) {
+                    grid[i][j] = p.value;
+                    --p.length;
+                }
+                else {
+                    index++;
+                    p = ps.get(index);
+                    grid[i][j] = p.value;
+                    --p.length;
+                }
+            }
+        }
+
+        printPGM("pgm_rn.pgm", grid);
     }
 
 

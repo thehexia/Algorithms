@@ -47,6 +47,22 @@ public class Project {
             }
             catch(Exception e) { e.printStackTrace(); }
         }
+        else if(args.length == 2 && args[0].equals("5")) {
+            String filePath = args[1];
+
+            try {
+                proc.runLenEncode(filePath);
+            }
+            catch(Exception e) { e.printStackTrace(); }
+        }
+        else if(args.length == 2 && args[0].equals("6")) {
+            String filePath = args[1];
+
+            try {
+                proc.runLenDecode(filePath);
+            }
+            catch(Exception e) { e.printStackTrace(); }
+        }
     	else {
         	System.out.println("Invalid arguments supplied");
         }

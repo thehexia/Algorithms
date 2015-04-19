@@ -118,19 +118,14 @@ public class LZ77 {
 				//2nd byte is the length of the match
 				//3rd byte is the next character
 				Triple trip = new Triple(mIndex, match.length(), nextChar);
-				// String triple = "~" + (mIndex) + "~" + (match.length()) + "~" + nextChar;
 				String concat = match + nextChar;
 				
 				//write the match
-				// System.out.println("Match:" + match);
-				// //write the match out
-				// System.out.println("Triple: " + triple);
-				// resultStr += triple;
+				//write the match out
 				result.add(trip);
 				//add the match to the dictionary window
 				dictBuffer.append(concat);
 				//write the dict buffer for debugging
-				// System.out.println("Dictionary: " + dictBuffer.toString());
 				//clear the current match
 				match = "";
 				//reset the index of the match
@@ -144,10 +139,6 @@ public class LZ77 {
 			//use ! as the eof representation
 			Triple trip = new Triple(mIndex, match.length(), ' ');
 			result.add(trip);
-			// String triple = "~" + (mIndex) + "~" + (match.length()) /*+ ")" + "EOF"*/;
-			// resultStr += triple;
-			// System.out.println("Match:" + triple);
-			// System.out.println("Dictionary: " + dictBuffer);
 		}
 
 		FileOutputStream fos = new FileOutputStream(new File(inputPath + ".lz77"));
