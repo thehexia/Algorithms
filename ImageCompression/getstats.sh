@@ -1,0 +1,10 @@
+java Project 3 pgm_svd/baboon.ascii.pgm_header.txt pgm_svd/baboon.ascii.pgm.SVD 200
+java Project 3 pgm_svd/balloons.ascii.pgm_header.txt pgm_svd/balloons.ascii.pgm.SVD 200
+java Project 3 pgm_svd/barbara.ascii.pgm_header.txt pgm_svd/barbara.ascii.pgm.SVD 200
+java Project 3 pgm_svd/brain_398.ascii.pgm_header.txt pgm_svd/brain_398.ascii.pgm.SVD 200
+java Project 3 pgm_svd/casablanca.ascii.pgm_header.txt pgm_svd/casablanca.ascii.pgm.SVD 200
+java Project 3 pgm_svd/coins.ascii.pgm_header.txt pgm_svd/coins.ascii.pgm.SVD 200
+java Project 3 pgm_svd/columns.ascii.pgm_header.txt pgm_svd/columns.ascii.pgm.SVD 200
+java Project 3 pgm_svd/dragon.ascii.pgm_header.txt pgm_svd/dragon.ascii.pgm.SVD 200
+java Project 3 pgm_svd/gator.ascii.pgm_header.txt pgm_svd/gator.ascii.pgm.SVD 200
+java Project 3 pgm_svd/mona_lisa.ascii.pgm_header.txt pgm_svd/mona_lisa.ascii.pgm.SVD 200

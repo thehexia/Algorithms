@@ -686,7 +686,7 @@ public class PGMProcessor {
         }
     }
 
-    public void runLenEncode(String inputPath) throws Exception {
+    public void runLenEncode(String inputPath, String outPath) throws Exception {
         int[][] grid = readPGM(inputPath);
 
         int width = grid[0].length;
@@ -718,7 +718,7 @@ public class PGMProcessor {
             coded.add(p);
         }
 
-        FileOutputStream fos = new FileOutputStream(new File(inputPath + ".rn"));
+        FileOutputStream fos = new FileOutputStream(new File(outPath));
         //write the output
         //write the width integer
         short sWide = (short) width;
@@ -744,7 +744,7 @@ public class PGMProcessor {
         fos.close();
     }
 
-    public void runLenDecode(String inputPath) throws Exception {
+    public void runLenDecode(String inputPath, String outPath) throws Exception {
         FileInputStream fis = new FileInputStream(new File(inputPath));
 
         int width = 0;
@@ -790,10 +790,10 @@ public class PGMProcessor {
             coded.add(p);
         }
 
-        runLenDecode2(coded, width, height);
+        runLenDecode2(coded, width, height, outPath);
     }
 
-    public void runLenDecode2(ArrayList<Pair> ps, int width, int height) throws Exception{
+    public void runLenDecode2(ArrayList<Pair> ps, int width, int height, String outPath) throws Exception{
         int[][] grid = new int[height][width];
 
         int index = 0;
@@ -813,7 +813,7 @@ public class PGMProcessor {
             }
         }
 
-        printPGM("pgm_rn.pgm", grid);
+        printPGM(outPath, grid);
     }
 
 

@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 public class LZ77 {
 
-	private static int dictBufferSize = 1024;
+	private static int dictBufferSize = 16383;
 	private static int lookBufferSize = 1024;
 
 	private static StringBuffer dictBuffer;
@@ -182,7 +182,14 @@ public class LZ77 {
 		LZ77 comp = new LZ77();
 		if(args[0].equals("1")) {
 			try {		
+				long startTime = System.nanoTime();
 				comp.encode2(args[1]);
+				long stopTime = System.nanoTime();
+				long duration = (stopTime - startTime); 
+
+				double ms = duration*1.0 / 1000000;
+
+				System.out.println("time (ms): " + ms);
 			}
 			catch(Exception e){
 				//dont care

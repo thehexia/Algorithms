@@ -47,19 +47,19 @@ public class Project {
             }
             catch(Exception e) { e.printStackTrace(); }
         }
-        else if(args.length == 2 && args[0].equals("5")) {
+        else if(args.length == 3 && args[0].equals("5")) {
             String filePath = args[1];
-
+            String outPath = args[2];
             try {
-                proc.runLenEncode(filePath);
+                proc.runLenEncode(filePath, outPath);
             }
             catch(Exception e) { e.printStackTrace(); }
         }
-        else if(args.length == 2 && args[0].equals("6")) {
+        else if(args.length == 3 && args[0].equals("6")) {
             String filePath = args[1];
-
+            String outPath = args[2];
             try {
-                proc.runLenDecode(filePath);
+                proc.runLenDecode(filePath, outPath);
             }
             catch(Exception e) { e.printStackTrace(); }
         }
