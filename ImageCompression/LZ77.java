@@ -50,7 +50,8 @@ public class LZ77 {
 			//nextChar byte (1)
 			byte carr = (byte) this.nextChar;
 
-			//put the offset
+			//put the offs
+			et
 			ByteBuffer bb = ByteBuffer.allocate(2);
 			bb.putShort((short) this.offset);
 			oarr = bb.array();
@@ -75,6 +76,7 @@ public class LZ77 {
 		lookBuffer = new byte[lookBufferSize];
 	}
 
+	//adopted from http://www.cs.waikato.ac.nz/~robi/comp209-03b/examples17/LZ77T.java
 	private void trimDictBuffer() {
 	    if (dictBuffer.length() > dictBufferSize) {
 	      dictBuffer = dictBuffer.delete(0,  dictBuffer.length() - dictBufferSize);
